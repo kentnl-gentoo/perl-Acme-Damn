@@ -1,0 +1,5 @@
+Revision history for Perl extension Acme::Damn.
+$Id: Changes,v 1.2 2003/06/08 13:40:43 ian Exp $
+
+0.01	Sun Jun  8 13:40:03 2003
+	- initial Acme::Damn release

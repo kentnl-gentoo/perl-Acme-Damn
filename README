@@ -1,0 +1,65 @@
+$Id: README,v 1.2 2003/06/08 13:38:28 ian Exp $
+
+NAME
+    Acme::Damn - Unbless Perl objects.
+
+SYNOPSIS
+      use Acme::Damn;
+
+      my $ref = ... some reference ...
+      my $obj = bless $ref , 'Some::Class';
+  
+      ... do something with your object ...
+
+         $ref = damn $obj;   # recover the original reference (unblessed)
+
+      ... neither $ref nor $obj are Some::Class objects ...
+
+INSTALLATION
+
+    To install this module type the following:
+
+      perl Makefile.PL
+      make
+      make test
+      make install
+
+	Acme::Damn uses XS to access the internals of Perl for it's magic, and
+	therefore must be compiled to be installed. Also, for testing,
+	Acme::Damn relies on Test::More and Test::Exception.
+
+DESCRIPTION
+    Acme::Damn provides a single routine, damn(), which takes a blessed
+    reference (a Perl object), and *unblesses* it, to return the original
+    reference. I can't think of any reason why you might want to do this,
+    but just because it's of no use doesn't mean that you shouldn't be able
+    to do it.
+
+  EXPORT
+    By default, Acme::Damn exports the method damn() into the current
+    namespace.
+
+  Methods
+    damn *object*
+        damn() accepts a single blessed reference as its argument, and
+        returns that reference unblessed. If *object* is not a blessed
+        reference, then damn() will "die" with an error.
+
+WARNING
+    Just as "bless" doesn't call an object's initialisation code, "damn"
+    doesn't invoke an object's "DESTROY" method. For objects that need to be
+    "DESTROY"ed, either don't "damn" them, or call "DESTROY" before
+    judegment is passed.
+
+SEE ALSO
+    bless, perlboot, perltoot, perltooc, perlbot, perlobj.
+
+AUTHOR
+    Ian Brayshaw, <ian@onemore.org>
+
+COPYRIGHT AND LICENSE
+    Copyright 2003 by Ian Brayshaw
+
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+

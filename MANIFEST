@@ -1,0 +1,8 @@
+Changes
+Damn.pm
+Damn.xs
+Makefile.PL
+MANIFEST
+README
+t/1compile.t
+t/2damn.t
