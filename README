@@ -1,7 +1,7 @@
-$Id: README,v 1.2 2003/06/08 13:38:28 ian Exp $
+$Id: README,v 1.5 2003/06/10 18:18:34 ian Exp $
 
 NAME
-    Acme::Damn - Unbless Perl objects.
+    Acme::Damn - 'Unbless' Perl objects.
 
 SYNOPSIS
       use Acme::Damn;
@@ -24,9 +24,9 @@ INSTALLATION
       make test
       make install
 
-	Acme::Damn uses XS to access the internals of Perl for it's magic, and
-	therefore must be compiled to be installed. Also, for testing,
-	Acme::Damn relies on Test::More and Test::Exception.
+    Acme::Damn uses XS to access the internals of Perl for it's magic, and
+    therefore must be compiled to be installed. Also, for testing,
+    Acme::Damn relies on Test::More and Test::Exception.
 
 DESCRIPTION
     Acme::Damn provides a single routine, damn(), which takes a blessed
@@ -37,7 +37,7 @@ DESCRIPTION
 
   EXPORT
     By default, Acme::Damn exports the method damn() into the current
-    namespace.
+    namespace. Aliases for damn() (see below) may be imported upon request.
 
   Methods
     damn *object*
@@ -45,11 +45,35 @@ DESCRIPTION
         returns that reference unblessed. If *object* is not a blessed
         reference, then damn() will "die" with an error.
 
+  Method Aliases
+    Not everyone likes to damn the same way, so Acme::Damn offers a list of
+    aliases for damn() that may be imported upon request:
+
+      use Acme::Damn qw( unbless );
+
+    The following aliases are supported:
+
+    * abjure()
+    * anathematize()
+    * condemn()
+    * curse()
+    * excommunicate()
+    * excoriate()
+    * expel()
+    * proscribe()
+    * recant()
+    * renounce()
+    * unbless()
+
 WARNING
     Just as "bless" doesn't call an object's initialisation code, "damn"
     doesn't invoke an object's "DESTROY" method. For objects that need to be
     "DESTROY"ed, either don't "damn" them, or call "DESTROY" before
-    judegment is passed.
+    judgement is passed.
+
+ACKNOWLEDGEMENTS
+    Thanks to Claes Jacobsson <claes@surfar.nu> for suggesting the use of
+    aliases.
 
 SEE ALSO
     bless, perlboot, perltoot, perltooc, perlbot, perlobj.

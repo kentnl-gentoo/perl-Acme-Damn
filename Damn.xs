@@ -1,4 +1,4 @@
-/* $Id: Damn.xs,v 1.6 2003/06/08 14:38:15 ian Exp $ */
+/* $Id: Damn.xs,v 1.8 2003/06/10 18:08:34 ian Exp $ */
 
 /*
 ** Damn.xs
@@ -6,8 +6,8 @@
 ** Define the damn() method of Acme::Damn.
 **
 ** Author:        I. Brayshaw <ian@onemore.org>
-** Revision:      $Revision: 1.6 $
-** Last modified: $Date: 2003/06/08 14:38:15 $
+** Revision:      $Revision: 1.8 $
+** Last modified: $Date: 2003/06/10 18:08:34 $
 */
 
 #include "EXTERN.h"
@@ -38,13 +38,43 @@ damn( rv )
 
 	PROTOTYPE: $
 
+	ALIAS:
+		abjure        =  1
+		anathematize  =  2
+		condemn       =  3
+		curse         =  4
+		excommunicate =  5
+		excoriate     =  6
+		expel         =  7
+		proscribe     =  8
+		recant        =  9
+		renounce      = 10
+		unbless       = 11
+
 	PREINIT:
-		SV * sv;
+		SV	* sv;
 
 	CODE:
 		/* if we don't have a blessed reference, then raise an error */
-		if ( ! sv_isobject( rv ) )
-			croak( "Expected blessed reference; can only damn programmer now" );
+		if ( ! sv_isobject( rv ) ) {
+			/* define an array of method names */
+			static const char	*method[]	= { "damn"          ,
+			                 	         	    "abjure"        ,
+			                 	         	    "anathematize"  ,
+			                 	         	    "condemn"       ,
+			                 	         	    "curse"         ,
+			                 	         	    "excommunicate" ,
+			                 	         	    "excoriate"     ,
+			                 	         	    "expel"         ,
+			                 	         	    "proscribe"     ,
+			                 	         	    "recant"        ,
+			                 	         	    "renounce"      ,
+			                 	         	    "unbless"       };
+
+			/* extract the name of the called routine (it may not be damn() */
+			croak( "Expected blessed reference; can only %s the programmer now" ,
+			       method[ ix ] );
+		}
 
 		/* need to dereference the RV to get the SV */
 		sv = SvRV( rv );

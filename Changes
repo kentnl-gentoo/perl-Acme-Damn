@@ -1,5 +1,9 @@
 Revision history for Perl extension Acme::Damn.
-$Id: Changes,v 1.2 2003/06/08 13:40:43 ian Exp $
+$Id: Changes,v 1.3 2003/06/10 18:16:13 ian Exp $
+
+0.02	Tue Jun 10 18:13:31 2003
+	- added support for aliases for damn() as suggested by
+	  Claes Jacobsson <claes@surfar.nu>
 
 0.01	Sun Jun  8 13:40:03 2003
 	- initial Acme::Damn release

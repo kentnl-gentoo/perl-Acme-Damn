@@ -1,4 +1,4 @@
-# $Id: Damn.pm,v 1.4 2003/06/09 19:35:23 ian Exp $
+# $Id: Damn.pm,v 1.8 2003/06/10 18:18:34 ian Exp $
 package Acme::Damn;
 
 use 5.000;
@@ -7,10 +7,13 @@ use strict;
 require Exporter;
 require DynaLoader;
 
-use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
-	$VERSION	= '0.01';
+use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
+
+	$VERSION	= '0.02';
 	@ISA		= qw( Exporter DynaLoader );
 	@EXPORT		= qw( damn                );
+	@EXPORT_OK	= qw( abjure anathematize condemn curse excommunicate
+	          	      excoriate expel proscribe recant renounce unbless );
 
 bootstrap Acme::Damn $VERSION;
 
@@ -49,7 +52,7 @@ it.
 =head2 EXPORT
 
 By default, B<Acme::Damn> exports the method B<damn()> into the current
-namespace.
+namespace. Aliases for B<damn()> (see below) may be imported upon request.
 
 =head2 Methods
 
@@ -64,11 +67,53 @@ B<damn()> will C<die> with an error.
 =back
 
 
+=head2 Method Aliases
+
+Not everyone likes to damn the same way, so B<Acme::Damn> offers a list of
+aliases for B<damn()> that may be imported upon request:
+
+  use Acme::Damn qw( unbless );
+
+The following aliases are supported:
+
+=over 4
+
+=item * B<abjure()>
+
+=item * B<anathematize()>
+
+=item * B<condemn()>
+
+=item * B<curse()>
+
+=item * B<excommunicate()>
+
+=item * B<excoriate()>
+
+=item * B<expel()>
+
+=item * B<proscribe()>
+
+=item * B<recant()>
+
+=item * B<renounce()>
+
+=item * B<unbless()>
+
+=back
+
+
 =head1 WARNING
 
 Just as C<bless> doesn't call an object's initialisation code, C<damn> doesn't
 invoke an object's C<DESTROY> method. For objects that need to be C<DESTROY>ed,
 either don't C<damn> them, or call C<DESTROY> before judgement is passed.
+
+
+=head1 ACKNOWLEDGEMENTS
+
+Thanks to Claes Jacobsson E<lt>claes@surfar.nuE<gt> for suggesting the use of
+aliases.
 
 
 =head1 SEE ALSO
