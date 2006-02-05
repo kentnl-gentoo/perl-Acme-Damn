@@ -1,4 +1,4 @@
-# $Id: Damn.pm,v 1.8 2003/06/10 18:18:34 ian Exp $
+# $Id: Damn.pm,v 1.10 2006-02-05 00:03:42 ian Exp $
 package Acme::Damn;
 
 use 5.000;
@@ -9,11 +9,61 @@ require DynaLoader;
 
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
 
-	$VERSION	= '0.02';
-	@ISA		= qw( Exporter DynaLoader );
-	@EXPORT		= qw( damn                );
-	@EXPORT_OK	= qw( abjure anathematize condemn curse excommunicate
-	          	      excoriate expel proscribe recant renounce unbless );
+  $VERSION    = '0.03';
+  @ISA        = qw( Exporter DynaLoader );
+  @EXPORT     = qw( damn                );
+
+
+sub import
+{
+  my  $class    = shift;
+
+  # check the unknown symbols to ensure they are 'safe'
+  my  @bad      = grep { /\W/o } @_;
+  if ( @bad ) {
+    # throw an error message informing the user where the problem is
+    my  ( undef, $file , $line )    = caller 0;
+
+    die sprintf( "Bad choice of symbol name%s %s for import at %s line %s\n"
+                 , ( @bad == 1 ) ? '' : 's'
+                 , join( ', ' , map { qq|'$_'| } @bad ) , $file , $line );
+  }
+
+  # remove duplicates from the list of aliases, as well as those symbol
+  # names listed in @EXPORT
+  my  @aliases  = do {  local %_;
+                              @_{ @_      } = undef;
+                       delete @_{ @EXPORT };
+                         keys %_                     };
+
+  # 'import' the symbols into the host package
+  my  ( $pkg )  = caller 1;
+  foreach my $alias ( @aliases ) {
+    no strict 'refs';
+
+    *{ $pkg . '::' . $alias } = sub {
+        my    $ref                      = shift;
+        my  ( undef , $file , $line )   = caller 1;
+
+        # call damn() with the location of where this method was
+        # originally called
+        &{ __PACKAGE__ . '::damn' }( $ref , $alias , $file , $line );
+
+        # NB: wanted to do something like
+        #         goto \&{ __PACKAGE__ . '::damn' };
+        #     having set the @_ array appropriately, but this caused a
+        #     "Attempt to free unrefernced SV" error that I couldn't solve
+        #     - I think it was to do with the @_ array
+      };
+  }
+
+  # add the known symbols to @_
+  splice @_ , 0;  push @_ , $class;
+
+  # run the "proper" import() routine
+  goto \&Exporter::import;
+} # import()
+
 
 bootstrap Acme::Damn $VERSION;
 
@@ -69,38 +119,17 @@ B<damn()> will C<die> with an error.
 
 =head2 Method Aliases
 
-Not everyone likes to damn the same way, so B<Acme::Damn> offers a list of
-aliases for B<damn()> that may be imported upon request:
+Not everyone likes to damn the same way or in the same language, so
+B<Acme::Damn> offers the ability to specify any alias on import, provided
+that alias is a valid Perl subroutine name (i.e. all characters match C<\w>).
 
   use Acme::Damn qw( unbless );
+  use Acme::Damn qw( foo );
+  use Acme::Damn qw( unblessthyself );
+  use Acme::Damn qw( recant );
 
-The following aliases are supported:
-
-=over 4
-
-=item * B<abjure()>
-
-=item * B<anathematize()>
-
-=item * B<condemn()>
-
-=item * B<curse()>
-
-=item * B<excommunicate()>
-
-=item * B<excoriate()>
-
-=item * B<expel()>
-
-=item * B<proscribe()>
-
-=item * B<recant()>
-
-=item * B<renounce()>
-
-=item * B<unbless()>
-
-=back
+Version 0.02 supported a defined list of aliases, and this has been replaced
+in v0.03 by the ability to import any alias for C<damn()>.
 
 
 =head1 WARNING
@@ -129,7 +158,7 @@ Ian Brayshaw, E<lt>ian@onemore.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2003 by Ian Brayshaw
+Copyright 2003-2006 Ian Brayshaw
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 

@@ -1,4 +1,4 @@
-$Id: README,v 1.5 2003/06/10 18:18:34 ian Exp $
+$Id: README,v 1.6 2006-02-05 00:11:42 ian Exp $
 
 NAME
     Acme::Damn - 'Unbless' Perl objects.
@@ -46,24 +46,18 @@ DESCRIPTION
         reference, then damn() will "die" with an error.
 
   Method Aliases
-    Not everyone likes to damn the same way, so Acme::Damn offers a list of
-    aliases for damn() that may be imported upon request:
+    Not everyone likes to damn the same way or in the same language, so
+    Acme::Damn offers the ability to specify any alias on import, provided
+    that alias is a valid Perl subroutine name (i.e. all characters match
+    "\w").
 
       use Acme::Damn qw( unbless );
+      use Acme::Damn qw( foo );
+      use Acme::Damn qw( unblessthyself );
+      use Acme::Damn qw( recant );
 
-    The following aliases are supported:
-
-    * abjure()
-    * anathematize()
-    * condemn()
-    * curse()
-    * excommunicate()
-    * excoriate()
-    * expel()
-    * proscribe()
-    * recant()
-    * renounce()
-    * unbless()
+    Version 0.02 supported a defined list of aliases, and this has been
+    replaced in v0.03 by the ability to import any alias for "damn()".
 
 WARNING
     Just as "bless" doesn't call an object's initialisation code, "damn"
@@ -82,7 +76,7 @@ AUTHOR
     Ian Brayshaw, <ian@onemore.org>
 
 COPYRIGHT AND LICENSE
-    Copyright 2003 by Ian Brayshaw
+    Copyright 2003-2006 Ian Brayshaw
 
     This library is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.
