@@ -1,4 +1,3 @@
-# $Id: Damn.pm,v 1.10 2006-02-05 00:03:42 ian Exp $
 package Acme::Damn;
 
 use 5.000;
@@ -9,7 +8,7 @@ require DynaLoader;
 
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
 
-  $VERSION    = '0.03';
+  $VERSION    = '0.04';
   @ISA        = qw( Exporter DynaLoader );
   @EXPORT     = qw( damn                );
 

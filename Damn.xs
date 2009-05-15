@@ -1,13 +1,10 @@
-/* $Id: Damn.xs,v 1.10 2006-02-05 00:03:42 ian Exp $ */
-
 /*
 ** Damn.xs
 **
 ** Define the damn() method of Acme::Damn.
 **
 ** Author:        I. Brayshaw <ian@onemore.org>
-** Revision:      $Revision: 1.10 $
-** Last modified: $Date: 2006-02-05 00:03:42 $
+** Last modified: Fri May 15 18:01:41 BST 2009
 */
 
 #include "EXTERN.h"
@@ -70,7 +67,11 @@ damn( rv , ... )
     ** the programmer's wrist; who know's what might happen otherwise
     */
     if ( SvREADONLY( sv ) )
-      croak( PL_no_modify );
+      /*
+      ** use "%s" rather than just PL_no_modify to satisfy gcc's -Wformat
+      **   see https://rt.cpan.org/Ticket/Display.html?id=45778
+      */
+      croak( "%s" , PL_no_modify );
 
     SvREFCNT_dec( SvSTASH( sv ) );  /* remove the reference to the stash */
     SvSTASH( sv ) = NULL;
