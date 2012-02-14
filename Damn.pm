@@ -2,15 +2,20 @@ package Acme::Damn;
 
 use 5.000;
 use strict;
+use warnings;
 
-require Exporter;
-require DynaLoader;
+use Exporter;
+use DynaLoader  qw( AUTOLOAD );
 
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
 
-  $VERSION    = '0.04';
+  $VERSION    = '0.05';
   @ISA        = qw( Exporter DynaLoader );
   @EXPORT     = qw( damn                );
+  @EXPORT_OK  = qw( bless               );
+
+# ensure we aren't exposed to changes in inherited AUTOLOAD behaviour
+*Acme::Damn::AUTOLOAD   = *DynaLoader::AUTOLOAD;
 
 
 sub import
@@ -30,14 +35,27 @@ sub import
 
   # remove duplicates from the list of aliases, as well as those symbol
   # names listed in @EXPORT
+  #   - we keep @EXPORT_OK in a separate list since they are optionally
+  #     requested at use() time
   my  @aliases  = do {  local %_;
-                              @_{ @_      } = undef;
-                       delete @_{ @EXPORT };
-                         keys %_                     };
+                              @_{ @_         } = undef;
+                       delete @_{ @EXPORT    };
+                         keys %_
+                     };
 
   # 'import' the symbols into the host package
-  my  ( $pkg )  = caller 1;
+  #   - ensure 'EXPORT_OK' is correctly honoured
+  my    %reserved   = map { $_ => 1 } @EXPORT , @EXPORT_OK;
+  my    @reserved   = ();
+  my  ( $pkg )      = caller 1;
   foreach my $alias ( @aliases ) {
+    # if this alias is a reserved symbol as defined by @EXPORT et al.
+    # then add it to the list of symbols to export
+        $reserved{ $alias }
+    and push @reserved , $alias
+    and next;
+
+    # otherwise, create an alias for 'damn'
     no strict 'refs';
 
     *{ $pkg . '::' . $alias } = sub {
@@ -57,7 +75,7 @@ sub import
   }
 
   # add the known symbols to @_
-  splice @_ , 0;  push @_ , $class;
+  splice @_ , 0;  push @_ , $class , @reserved;
 
   # run the "proper" import() routine
   goto \&Exporter::import;
@@ -66,7 +84,8 @@ sub import
 
 bootstrap Acme::Damn $VERSION;
 
-1;
+
+1;  # end of module
 __END__
 =pod
 
@@ -93,9 +112,7 @@ Acme::Damn - 'Unbless' Perl objects.
 
 B<Acme::Damn> provides a single routine, B<damn()>, which takes a blessed
 reference (a Perl object), and I<unblesses> it, to return the original
-reference. I can't think of any reason why you might want to do this, but
-just because it's of no use doesn't mean that you shouldn't be able to do
-it.
+reference.
 
 
 =head2 EXPORT
@@ -112,6 +129,29 @@ namespace. Aliases for B<damn()> (see below) may be imported upon request.
 B<damn()> accepts a single blessed reference as its argument, and returns
 that reference unblessed. If I<object> is not a blessed reference, then
 B<damn()> will C<die> with an error.
+
+
+=item B<bless> I<reference>
+
+=item B<bless> I<reference> [ , I<package> ]
+
+=item B<bless> I<reference> [ , undef ]
+
+Optionally, B<Acme::Damn> will modify the behaviour of C<bless> to
+allow the passing of an explicit C<undef> as the target package to invoke
+B<damn()>:
+
+    use Acme::Damn  qw( bless );
+
+    my  $obj = ... some blessed reference ...;
+
+    # the following statements are equivalent
+    my  $ref = bless $obj , undef;
+    my  $ref = damn $obj;
+
+B<NOTE:> The modification of C<bless> is lexically scoped to the current
+package, and is I<not> global.
+
 
 =back
 
@@ -141,7 +181,8 @@ either don't C<damn> them, or call C<DESTROY> before judgement is passed.
 =head1 ACKNOWLEDGEMENTS
 
 Thanks to Claes Jacobsson E<lt>claes@surfar.nuE<gt> for suggesting the use of
-aliases.
+aliases, and Bo Lindbergh E<lt>blgl@cpan.orgE<gt> for the suggested
+modification of C<bless>.
 
 
 =head1 SEE ALSO
@@ -157,7 +198,7 @@ Ian Brayshaw, E<lt>ian@onemore.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2003-2006 Ian Brayshaw
+Copyright 2003-2012 Ian Brayshaw
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 

@@ -4,7 +4,7 @@
 ** Define the damn() method of Acme::Damn.
 **
 ** Author:        I. Brayshaw <ian@onemore.org>
-** Last modified: Fri May 15 18:01:41 BST 2009
+** Last modified: $Date: 2012-02-14 15:48:24 +0000 (Tue, 14 Feb 2012) $
 */
 
 #include "EXTERN.h"
@@ -25,6 +25,55 @@
 # define SvUNMAGIC( sv )
 
 #endif
+
+/* ensure SvPV_const is declared */
+#ifndef SvPV_const
+# define  SvPV_const(s,l) ((const char *)SvPV(s,l))
+#endif
+
+
+/* handle the evolution of Perl_warner and Perl_ck_warner */
+#ifdef packWARN
+# ifdef ckWARN
+#  define WARNER(t,s)   if (ckWARN(t)) { Perl_warner( aTHX_ packWARN(t) , s ); }
+# else
+#  define WARNER(t,s)   Perl_ck_warner( aTHX_ packWARN(t) , s )
+# endif
+#else
+# define  WARNER(t,s)   if (ckWARN(t)) { Perl_warner( aTHX_ t , s ); }
+#endif
+
+static SV *
+__damn( rv )
+  SV * rv;
+{
+  /* need to dereference the RV to get the SV */
+  SV  *sv = SvRV( rv );
+
+  /*
+  ** if this is read-only, then we should do the right thing and slap
+  ** the programmer's wrist; who know's what might happen otherwise
+  */
+  if ( SvREADONLY( sv ) )
+    /*
+    ** use "%s" rather than just PL_no_modify to satisfy gcc's -Wformat
+    **   see https://rt.cpan.org/Ticket/Display.html?id=45778
+    */
+    croak( "%s" , PL_no_modify );
+
+  SvREFCNT_dec( SvSTASH( sv ) );  /* remove the reference to the stash */
+  SvSTASH( sv ) = NULL;
+  SvOBJECT_off( sv );             /* unset the object flag */
+  if ( SvTYPE( sv ) != SVt_PVIO ) /* if we don't have an IO stream, we */
+    PL_sv_objcount--;             /* should decrement the object count */
+
+  /* we need to clear the magic flag on the given RV */
+  SvAMAGIC_off( rv );
+  /* as of Perl 5.8.0 we need to clear more magic */
+  SvUNMAGIC( sv );
+
+  return  rv;
+} /* __damn() */
 
 
 MODULE = Acme::Damn   PACKAGE = Acme::Damn    
@@ -59,30 +108,61 @@ damn( rv , ... )
       }
     }
 
-    /* need to dereference the RV to get the SV */
-    sv = SvRV( rv );
+    rv  = __damn( rv );
 
+  OUTPUT:
+    rv
+
+
+SV *
+bless( rv , ... )
+  SV * rv;
+
+  PROTOTYPE: $;$
+
+  CODE:
     /*
-    ** if this is read-only, then we should do the right thing and slap
-    ** the programmer's wrist; who know's what might happen otherwise
+    ** how many arguments do we have?
+    **    - if we have two arguments, with the second being 'undef'
+    **      then we call damn()
+    **    - otherwise, we default to CORE::bless()
     */
-    if ( SvREADONLY( sv ) )
-      /*
-      ** use "%s" rather than just PL_no_modify to satisfy gcc's -Wformat
-      **   see https://rt.cpan.org/Ticket/Display.html?id=45778
-      */
-      croak( "%s" , PL_no_modify );
+    if ( items == 2 && ! SvOK( ST(1) ) )
+      rv  = __damn(rv);
+    else {
+      HV          *stash;
+      STRLEN       len;
+      const char  *ptr;
+      SV          *sv;
 
-    SvREFCNT_dec( SvSTASH( sv ) );  /* remove the reference to the stash */
-    SvSTASH( sv ) = NULL;
-    SvOBJECT_off( sv );             /* unset the object flag */
-    if ( SvTYPE( sv ) != SVt_PVIO ) /* if we don't have an IO stream, we */
-      PL_sv_objcount--;             /* should decrement the object count */
+      /* have we been called as a two-argument bless? */
+      if ( items == 2 ) {
+        /*
+        ** here we replicate Perl_pp_bless()
+        **    - see pp.c
+        */
 
-    /* we need to clear the magic flag on the given RV */
-    SvAMAGIC_off( rv );
-    /* as of Perl 5.8.0 we need to clear more magic */
-    SvUNMAGIC( sv );
+        /* ensure we have a package name, not a reference as argument #2 */
+        sv    = ST(1);
+        if ( ! SvGMAGICAL( sv ) && ! SvAMAGIC( sv ) && SvROK( sv ) )
+          croak( "Attempt to bless into a reference" );
+
+        /* extract the name of the target package */
+        ptr   = SvPV_const( sv , len );
+        if ( len == 0 )
+          WARNER(WARN_MISC, "Explicit blessing to '' (assuming package main)");
+
+        /* extract the named stash (creating it if needed) */
+        stash = gv_stashpvn( ptr , len , GV_ADD | SvUTF8(sv) );
+      } else {
+
+        /* if no package name as been given, then use the current package */
+        stash = CopSTASH( PL_curcop );
+      }
+
+      /* bless the target reference */
+      (void)sv_bless( rv , stash );
+    }
 
   OUTPUT:
     rv
