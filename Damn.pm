@@ -9,7 +9,7 @@ use DynaLoader  qw( AUTOLOAD );
 
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
 
-  $VERSION    = '0.05';
+  $VERSION    = '0.06';
   @ISA        = qw( Exporter DynaLoader );
   @EXPORT     = qw( damn                );
   @EXPORT_OK  = qw( bless               );

@@ -90,7 +90,7 @@ AUTHOR
     Ian Brayshaw, <ian@onemore.org>
 
 COPYRIGHT AND LICENSE
-    Copyright 2003-2012 Ian Brayshaw
+    Copyright 2003-2014 Ian Brayshaw
 
     This library is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.

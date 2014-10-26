@@ -1,4 +1,4 @@
-/*
+ /*
 ** Damn.xs
 **
 ** Define the damn() method of Acme::Damn.
@@ -63,8 +63,10 @@ __damn( rv )
   SvREFCNT_dec( SvSTASH( sv ) );  /* remove the reference to the stash */
   SvSTASH( sv ) = NULL;
   SvOBJECT_off( sv );             /* unset the object flag */
+#if PERL_VERSION < 18
   if ( SvTYPE( sv ) != SVt_PVIO ) /* if we don't have an IO stream, we */
     PL_sv_objcount--;             /* should decrement the object count */
+#endif
 
   /* we need to clear the magic flag on the given RV */
   SvAMAGIC_off( rv );
