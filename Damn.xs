@@ -1,10 +1,9 @@
-/*
+ /*
 ** Damn.xs
 **
 ** Define the damn() method of Acme::Damn.
 **
 ** Author:        I. Brayshaw <ian@onemore.org>
-** Last modified: $Date: 2012-02-14 15:48:24 +0000 (Tue, 14 Feb 2012) $
 */
 
 #include "EXTERN.h"
@@ -64,8 +63,10 @@ __damn( rv )
   SvREFCNT_dec( SvSTASH( sv ) );  /* remove the reference to the stash */
   SvSTASH( sv ) = NULL;
   SvOBJECT_off( sv );             /* unset the object flag */
+#if PERL_VERSION < 18
   if ( SvTYPE( sv ) != SVt_PVIO ) /* if we don't have an IO stream, we */
     PL_sv_objcount--;             /* should decrement the object count */
+#endif
 
   /* we need to clear the magic flag on the given RV */
   SvAMAGIC_off( rv );

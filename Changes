@@ -1,5 +1,5 @@
 Revision history for Perl extension Acme::Damn.
-$Id: Changes 2308 2012-02-14 14:24:17Z ian $
+
 
 0.05  Tue Feb 14 12:10:59 2012
   - added support for modified bless() behaviour as suggested by
