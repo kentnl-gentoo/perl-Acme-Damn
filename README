@@ -79,7 +79,7 @@ WARNING
     judgement is passed.
 
 ACKNOWLEDGEMENTS
-    Thanks to Claes Jacobsson <claes@surfar.nu> for suggesting the use of
+    Thanks to Claes Jacobsson <claesjac@cpan.org> for suggesting the use of
     aliases, and Bo Lindbergh <blgl@cpan.org> for the suggested modification
     of "bless".
 
@@ -87,11 +87,10 @@ SEE ALSO
     bless, perlboot, perltoot, perltooc, perlbot, perlobj.
 
 AUTHOR
-    Ian Brayshaw, <ian@onemore.org>
+    Ian Brayshaw, <ibb@cpan.org>
 
 COPYRIGHT AND LICENSE
-    Copyright 2003-2014 Ian Brayshaw
+    Copyright 2003-2016 Ian Brayshaw
 
     This library is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.
-
