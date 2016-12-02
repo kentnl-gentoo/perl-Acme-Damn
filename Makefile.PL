@@ -4,7 +4,7 @@
 use 5.006;
 use ExtUtils::MakeMaker;
 
-WriteMakefile(
+WriteMakefile1(
     'NAME'          => 'Acme::Damn' ,
     'VERSION_FROM'  => 'Damn.pm'    ,
 
