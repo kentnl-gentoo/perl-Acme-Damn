@@ -1,6 +1,9 @@
 Revision history for Perl extension Acme::Damn.
 
 
+0.06  Sun Oct 26 20:50:12 2014
+  - support for Perl >= v5.18
+
 0.05  Tue Feb 14 12:10:59 2012
   - added support for modified bless() behaviour as suggested by
     Bo Lindbergh <blgl@cpan.org>

@@ -9,7 +9,7 @@ use DynaLoader  qw( AUTOLOAD );
 
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
 
-  $VERSION    = '0.06';
+  $VERSION    = '0.06.1';
   @ISA        = qw( Exporter DynaLoader );
   @EXPORT     = qw( damn                );
   @EXPORT_OK  = qw( bless               );
@@ -193,12 +193,12 @@ L<perlobj>.
 
 =head1 AUTHOR
 
-Ian Brayshaw, E<lt>ian@onemore.orgE<gt>
+Ian Brayshaw, E<lt>ibb@cpan.orgE<gt>
 
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2003-2012 Ian Brayshaw
+Copyright 2003-2016 Ian Brayshaw
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 

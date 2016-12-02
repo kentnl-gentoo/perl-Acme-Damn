@@ -1,7 +1,7 @@
 ---
 abstract: unknown
 author:
-  - 'Ian Brayshaw <ian@onemore.org>'
+  - 'Ian Brayshaw <ibb@cpan.org>'
 build_requires:
   ExtUtils::MakeMaker: '0'
 configure_requires:
@@ -20,4 +20,4 @@ no_index:
 requires:
   Test::Exception: '0'
   Test::More: '0'
-version: '0.06'
+version: v0.06.1

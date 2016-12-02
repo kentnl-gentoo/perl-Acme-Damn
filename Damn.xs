@@ -1,9 +1,8 @@
- /*
+/*
 ** Damn.xs
 **
 ** Define the damn() method of Acme::Damn.
 **
-** Author:        I. Brayshaw <ian@onemore.org>
 */
 
 #include "EXTERN.h"
