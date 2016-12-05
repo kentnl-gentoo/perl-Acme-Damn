@@ -16,5 +16,6 @@ WriteMakefile(
       ( AUTHOR     => 'Ian Brayshaw <ian@onemore.org>') : ()) ,
     'LIBS'         => ['']                                    ,
     'DEFINE'       => ''                                      ,
-    'INC'          => '-I.'
+    'INC'          => '-I.'                                   ,
+    'OPTIMIZE'     => '$(CFLAGS)'
 );
