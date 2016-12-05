@@ -27,6 +27,7 @@ WriteMakefile1(
     },
     'LIBS'         => ['']                                    ,
     'DEFINE'       => ''                                      ,
+    'OPTIMIZE'     => '$(CFLAGS)'                             ,
     'INC'          => '-I.'
 );
 
